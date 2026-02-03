@@ -3,16 +3,12 @@ import middleware, { userRole } from "../../middleware/auth";
 import { bookingController } from "./booking.controller";
 
 const router = express.Router();
-router.post(
-  "/",
-  middleware(userRole.STUDENT),
-  bookingController.createBooking,
-);
+router.post("/", middleware(userRole.STUDENT), bookingController.createBooking);
 router.get("/", middleware(), bookingController.getBookings);
 router.get("/:id", middleware(), bookingController.getBookingById);
 router.patch(
   "/:id/status",
-  middleware(),
+  middleware(userRole.TUTOR),
   bookingController.updateBookingStatus,
 );
 
