@@ -19,6 +19,7 @@ const getUserById = async (id: string) => {
       name: true,
       email: true,
       role: true,
+      status: true,
     },
   });
 };

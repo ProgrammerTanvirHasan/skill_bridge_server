@@ -12,7 +12,7 @@ const createBooking = async (studentId: string, data: CreateBookingInput) => {
       studentId,
       tutorId: data.tutorId,
       scheduledAt: data.scheduledAt,
-      status: "CONFIRMED",
+      status: "PENDING",
     },
     include: {
       tutor: {

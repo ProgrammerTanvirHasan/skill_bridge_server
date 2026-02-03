@@ -28,8 +28,6 @@ export interface AvailabilitySlot {
   endTime: string;
 }
 
-/* ---------------- CREATE PROFILE ---------------- */
-
 const createTutorProfile = async (
   userId: string,
   data: CreateTutorProfileInput,
@@ -72,8 +70,6 @@ const createTutorProfile = async (
   });
 };
 
-/* ---------------- GET ALL ---------------- */
-
 const getAllTutors = async (filters?: TutorFilters) => {
   const where: Prisma.TutorProfileWhereInput = {};
 
@@ -109,8 +105,6 @@ const getAllTutors = async (filters?: TutorFilters) => {
   return tutors;
 };
 
-/* ---------------- GET BY ID ---------------- */
-
 const getTutorById = async (id: number) =>
   prisma.tutorProfile.findUnique({
     where: { id },
@@ -124,8 +118,6 @@ const getTutorById = async (id: number) =>
       availability: true,
     },
   });
-
-/* ---------------- UPDATE PROFILE ---------------- */
 
 const updateTutorProfile = async (
   userId: string,
@@ -172,8 +164,6 @@ const updateTutorProfile = async (
     });
   });
 };
-
-/* ---------------- AVAILABILITY ---------------- */
 
 const setAvailability = async (userId: string, slots: AvailabilitySlot[]) => {
   const profile = await prisma.tutorProfile.findUnique({

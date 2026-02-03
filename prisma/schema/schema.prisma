@@ -95,7 +95,7 @@ model Booking {
   tutorId Int
 
   scheduledAt DateTime
-  status BookingStatus @default(CONFIRMED)
+  status BookingStatus @default(PENDING)
 
   createdAt DateTime @default(now())
 }
