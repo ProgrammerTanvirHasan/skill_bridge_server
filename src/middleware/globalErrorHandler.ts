@@ -8,7 +8,7 @@ function errorHandler(
   next: NextFunction,
 ) {
   let statusCode = 500;
-  let errorMessage = "Internal Server Error";
+  let errorMessage = "Something went wrong";
   let errorDetails = err;
 
   // PrismaClientValidationError

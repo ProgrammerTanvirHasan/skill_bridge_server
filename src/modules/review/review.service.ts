@@ -2,54 +2,104 @@ import { prisma } from "../../lib/prisma";
 
 interface CreateReviewInput {
   tutorId: number;
-  bookingId?: number | undefined;
+  bookingId?: number;
   rating: number;
-  comment?: string | undefined;
+  comment?: string;
 }
 
 const createReview = async (studentId: string, data: CreateReviewInput) => {
+  // ✅ Rating validation
   if (data.rating < 1 || data.rating > 5) {
     throw new Error("Rating must be between 1 and 5");
   }
-  const existing = await prisma.review.findFirst({
+
+  // ✅ bookingId required for review
+  if (!data.bookingId) {
+    throw new Error("Booking ID is required to submit a review");
+  }
+
+  // ✅ Check booking exists
+  const booking = await prisma.booking.findUnique({
+    where: { id: data.bookingId },
+  });
+
+  if (!booking) {
+    throw new Error("Booking not found");
+  }
+
+  // ✅ Ensure booking belongs to this student
+  if (booking.studentId !== studentId) {
+    throw new Error("You are not allowed to review this booking");
+  }
+
+  // ✅ Ensure booking tutor matches
+  if (booking.tutorId !== data.tutorId) {
+    throw new Error("Tutor mismatch for this booking");
+  }
+
+  // ✅ Only completed booking can be reviewed
+  if (booking.status !== "COMPLETED") {
+    throw new Error("Only completed bookings can be reviewed");
+  }
+
+  // ✅ Check if review already exists for this booking
+  const existingReview = await prisma.review.findFirst({
     where: {
-      studentId,
-      tutorId: data.tutorId,
-      ...(data.bookingId
-        ? {}
-        : {}),
+      bookingId: data.bookingId,
     },
   });
-  if (existing) {
-    throw new Error("You have already reviewed this tutor");
+
+  if (existingReview) {
+    throw new Error("You have already reviewed this booking");
   }
-  if (data.bookingId) {
-    const booking = await prisma.booking.findUnique({
-      where: { id: data.bookingId },
-    });
-    if (
-      !booking ||
-      booking.studentId !== studentId ||
-      booking.tutorId !== data.tutorId ||
-      booking.status !== "COMPLETED"
-    ) {
-      throw new Error("Invalid or incomplete booking for this review");
-    }
-  }
-  return prisma.review.create({
+
+  // ✅ Create review
+  const review = await prisma.review.create({
     data: {
       studentId,
       tutorId: data.tutorId,
+      bookingId: data.bookingId,
       rating: data.rating,
       comment: data.comment ?? null,
     },
     include: {
-      student: { select: { id: true, name: true } },
-      tutor: { include: { user: true } },
+      student: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      tutor: {
+        include: {
+          user: true,
+        },
+      },
     },
+  });
+
+  return review;
+};
+const getReviewsForTutor = async (userId: string) => {
+  const tutorProfile = await prisma.tutorProfile.findUnique({
+    where: { userId },
+  });
+
+  if (!tutorProfile) {
+    throw new Error("Tutor profile not found");
+  }
+
+  return prisma.review.findMany({
+    where: { tutorId: tutorProfile.id },
+    include: {
+      student: {
+        select: { id: true, name: true },
+      },
+    },
+    orderBy: { createdAt: "desc" },
   });
 };
 
 export const reviewService = {
   createReview,
+  getReviewsForTutor,
 };

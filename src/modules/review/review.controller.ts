@@ -27,14 +27,38 @@ const createReview = async (
     const result = await reviewService.createReview(user.id, input);
     res.status(201).json({ success: true, data: result });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Failed to create review";
-    if (message.includes("already reviewed") || message.includes("Invalid or incomplete")) {
+    const message =
+      error instanceof Error ? error.message : "Failed to create review";
+    if (
+      message.includes("already reviewed") ||
+      message.includes("Invalid or incomplete")
+    ) {
       return res.status(400).json({ success: false, message });
     }
     next(error);
   }
 };
 
+const getMyReviews = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    const reviews = await reviewService.getReviewsForTutor(user.id);
+
+    res.json({ success: true, data: reviews });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const reviewController = {
   createReview,
+  getMyReviews,
 };

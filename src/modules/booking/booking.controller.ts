@@ -28,11 +28,7 @@ const createBooking = async (
   }
 };
 
-const getBookings = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+const getBookings = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = req.user;
     if (!user) {
@@ -58,11 +54,30 @@ const getBookingById = async (
     const id = Number(req.params.id);
     const result = await bookingService.getBookingById(id, user.id, user.role);
     if (!result) {
-      return res.status(404).json({ success: false, message: "Booking not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Booking not found" });
     }
     res.status(200).json({ success: true, data: result });
   } catch (error) {
     next(error);
+  }
+};
+
+const getMyBookings = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+    const tutorId = req.user.id;
+    const bookings = await bookingService.getBookingsByTutorId(tutorId);
+    res.status(200).json({ success: true, data: bookings });
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -91,7 +106,9 @@ const updateBookingStatus = async (
       user.role,
     );
     if (!result) {
-      return res.status(404).json({ success: false, message: "Booking not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Booking not found" });
     }
     res.status(200).json({ success: true, data: result });
   } catch (error) {
@@ -102,6 +119,7 @@ const updateBookingStatus = async (
 export const bookingController = {
   createBooking,
   getBookings,
+  getMyBookings,
   getBookingById,
   updateBookingStatus,
 };

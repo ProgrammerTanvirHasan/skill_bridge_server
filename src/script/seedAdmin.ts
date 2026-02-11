@@ -1,10 +1,30 @@
-import { randomUUID } from "crypto";
-import bcrypt from "bcrypt";
+import { randomBytes, randomUUID } from "crypto";
+import { scryptAsync } from "@noble/hashes/scrypt.js";
+
 import { prisma } from "../lib/prisma";
+
+const SCRYPT_CONFIG = {
+  N: 16384,
+  r: 16,
+  p: 1,
+  dkLen: 64,
+  maxmem: 128 * 16384 * 16 * 2,
+};
+
+async function hashPassword(password: string): Promise<string> {
+  const salt = randomBytes(16).toString("hex");
+  const key = await scryptAsync(
+    password.normalize("NFKC"),
+    salt,
+    SCRYPT_CONFIG,
+  );
+  const keyHex = Buffer.from(key).toString("hex");
+  return `${salt}:${keyHex}`;
+}
 
 async function seedAdmin() {
   try {
-    const adminEmail = "tanvir@email.com";
+    const adminEmail = "tanvir129@gmail.com";
 
     const existing = await prisma.user.findUnique({
       where: { email: adminEmail },
@@ -15,8 +35,9 @@ async function seedAdmin() {
       process.exit(0);
     }
 
-    const hashedPassword = await bcrypt.hash("tanvir123", 10);
+    const password = "tanvir129";
     const userId = randomUUID();
+    const hashedPassword = await hashPassword(password);
 
     await prisma.user.create({
       data: {

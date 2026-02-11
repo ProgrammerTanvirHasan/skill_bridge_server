@@ -11,7 +11,14 @@ router.post(
 );
 
 router.get("/", tutorsController.getAllTutors);
-router.get("/:id", tutorsController.getTutorById);
+// router.get("/:id", tutorsController.getAllTutors);
+
+router.get(
+  "/me",
+  middleware(userRole.TUTOR),
+  tutorsController.getAllTutorProfilesController,
+);
+router.get("/:id", middleware(), tutorsController.getTutorProfileById);
 
 router.put(
   "/profile",

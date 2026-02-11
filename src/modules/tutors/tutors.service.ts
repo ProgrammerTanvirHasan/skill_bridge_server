@@ -39,7 +39,9 @@ const createTutorProfile = async (
       where: { userId },
     });
 
-    if (existing) return existing;
+    if (existing) {
+      throw new Error("Your profile already exists");
+    }
 
     const profile = await tx.tutorProfile.create({
       data: {
@@ -104,20 +106,60 @@ const getAllTutors = async (filters?: TutorFilters) => {
 
   return tutors;
 };
-
-const getTutorById = async (id: number) =>
-  prisma.tutorProfile.findUnique({
-    where: { id },
+const getTutorById = async (tutorId: number) => {
+  return prisma.tutorProfile.findUnique({
+    where: { id: tutorId },
     include: {
       user: true,
       categories: { include: { category: true } },
-      reviews: {
-        include: { student: { select: { id: true, name: true } } },
-      },
-      bookings: true,
-      availability: true,
+      reviews: { include: { student: true } },
     },
   });
+};
+const getAllTutorProfiles = async () => {
+  const profiles = await prisma.tutorProfile.findMany({
+    include: {
+      user: true, // যাতে email access করতে পারো
+      categories: { include: { category: true } },
+    },
+  });
+
+  return profiles.map((profile) => ({
+    id: profile.id,
+    bio: profile.bio,
+    hourlyRateCents: profile.hourlyRate,
+    status: profile.status,
+    categoryIds: profile.categories.map((c) => c.category.id),
+    user: {
+      id: profile.user.id,
+      email: profile.user.email,
+      name: profile.user.name,
+    },
+  }));
+};
+
+const getTutorByUserId = async (userId: string) => {
+  const profile = await prisma.tutorProfile.findUnique({
+    where: { userId },
+    include: {
+      categories: {
+        include: {
+          category: true,
+        },
+      },
+    },
+  });
+
+  if (!profile) return null;
+
+  return {
+    id: profile.id,
+    bio: profile.bio,
+    hourlyRateCents: profile.hourlyRate,
+    status: profile.status,
+    categoryIds: profile.categories.map((c) => c.category.id),
+  };
+};
 
 const updateTutorProfile = async (
   userId: string,
@@ -202,6 +244,8 @@ export const tutorsService = {
   createTutorProfile,
   getAllTutors,
   getTutorById,
+  getTutorByUserId,
+  getAllTutorProfiles,
   updateTutorProfile,
   setAvailability,
 };

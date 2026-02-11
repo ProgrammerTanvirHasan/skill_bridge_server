@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { userService } from "./user.service";
 
 // all users
@@ -15,6 +15,44 @@ const getAllUsersController = async (req: Request, res: Response) => {
       success: false,
       message: "Server error",
     });
+  }
+};
+
+const updateUserProfileController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    const { name, email } = req.body;
+
+    if (email && typeof email !== "string") {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid email format" });
+    }
+    if (name && typeof name !== "string") {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid name format" });
+    }
+
+    const updatedUser = await userService.updateUserProfile(userId, {
+      name,
+      email,
+    });
+
+    res.status(200).json({
+      success: true,
+      data: updatedUser,
+    });
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -45,5 +83,6 @@ const getLoggedInUserController = async (req: any, res: Response) => {
 
 export const userController = {
   getAllUsersController,
+  updateUserProfileController,
   getLoggedInUserController,
 };

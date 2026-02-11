@@ -4,8 +4,16 @@ import { bookingController } from "./booking.controller";
 
 const router = express.Router();
 router.post("/", middleware(userRole.STUDENT), bookingController.createBooking);
-router.get("/", middleware(), bookingController.getBookings);
-router.get("/:id", middleware(), bookingController.getBookingById);
+router.get(
+  "/tutor/me",
+  middleware(userRole.TUTOR, userRole.STUDENT),
+  bookingController.getBookings,
+);
+router.get(
+  "/:id",
+  middleware(userRole.TUTOR, userRole.STUDENT),
+  bookingController.getBookingById,
+);
 router.patch(
   "/:id/status",
   middleware(userRole.TUTOR),

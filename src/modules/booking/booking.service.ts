@@ -115,9 +115,21 @@ const updateBookingStatus = async (
   });
 };
 
+export const getBookingsByTutorId = async (tutorId: string) => {
+  return prisma.booking.findMany({
+    where: { tutorId: Number(tutorId) },
+    include: {
+      student: true,
+      tutor: true,
+    },
+    orderBy: { createdAt: "desc" },
+  });
+};
+
 export const bookingService = {
   createBooking,
   getBookingsByUser,
   getBookingById,
+  getBookingsByTutorId,
   updateBookingStatus,
 };

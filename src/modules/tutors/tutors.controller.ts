@@ -67,16 +67,57 @@ const getAllTutors = async (
     next(error);
   }
 };
-
-const getTutorById = async (
+const getTutorProfileById = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const id = Number(req.params.id);
+    const tutorId = Number(req.params.id);
 
-    const result = await tutorsService.getTutorById(id);
+    if (Number.isNaN(tutorId)) {
+      return res.status(400).json({ message: "Invalid tutor id" });
+    }
+
+    const result = await tutorsService.getTutorById(tutorId);
+
+    if (!result) {
+      return res.status(404).json({ message: "Tutor not found" });
+    }
+
+    res.json({ success: true, data: result });
+  } catch (e) {
+    next(e);
+  }
+};
+const getAllTutorProfilesController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const profiles = await tutorsService.getAllTutorProfiles();
+    res.status(200).json({ success: true, data: profiles });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getMyTutorProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+    const userId = req.user.id;
+
+    const result = await tutorsService.getTutorByUserId(userId);
+    if (!result) {
+      return res.status(200).json({ success: true, data: null });
+    }
 
     res.status(200).json({
       success: true,
@@ -152,7 +193,9 @@ const setAvailability = async (
 export const tutorsController = {
   createTutorProfile,
   getAllTutors,
-  getTutorById,
+  getAllTutorProfilesController,
+  getTutorProfileById,
+  getMyTutorProfile,
   updateTutorProfile,
   setAvailability,
 };

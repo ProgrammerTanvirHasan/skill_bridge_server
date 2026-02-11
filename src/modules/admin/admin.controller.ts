@@ -64,6 +64,7 @@ const createCategory = async (
 ) => {
   try {
     const { name } = req.body;
+    console.log(req.body, "body");
     if (!name || typeof name !== "string") {
       return res.status(400).json({
         success: false,
