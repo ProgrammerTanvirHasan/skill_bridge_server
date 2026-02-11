@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx tsx watch src/server.ts"
+    "dev": "npx tsx watch src/server.ts",
+    "build": "prisma generate",
+    "start": "npx tsx src/server.ts"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +18,7 @@
     "@types/express": "^5.0.6",
     "@types/node": "^25.0.10",
     "@types/pg": "^8.16.0",
+    "@vercel/node": "^5.6.2",
     "prisma": "^7.3.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
