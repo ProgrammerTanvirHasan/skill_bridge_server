@@ -12,6 +12,7 @@ import { notFound } from "./middleware/notFound";
 import errorHandler from "./middleware/globalErrorHandler";
 import { auth } from "./lib/auth";
 
+
 const app = express();
 app.use(
   cors({

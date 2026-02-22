@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
+
 import { auth } from "../lib/auth";
 import { prisma } from "../lib/prisma";
 
@@ -21,7 +22,7 @@ declare global {
   }
 }
 
-const middleware = (...roles: userRole[]) => {
+const authMiddleware = (...roles: userRole[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const session = await auth.api.getSession({
@@ -31,7 +32,6 @@ const middleware = (...roles: userRole[]) => {
       if (!session) {
         return res.status(401).json({ message: "Unauthorized" });
       }
-
 
       const dbUser = await prisma.user.findUnique({
         where: { id: session.user.id },
@@ -56,4 +56,4 @@ const middleware = (...roles: userRole[]) => {
     }
   };
 };
-export default middleware;
+export default authMiddleware;

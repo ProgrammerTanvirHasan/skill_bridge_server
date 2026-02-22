@@ -1,15 +1,15 @@
 import express from "express";
 import { userController } from "./user.controller";
-import middleware from "../../middleware/auth";
+import authMiddleware from "../../middleware/authMiddleware";
 
 const router = express.Router();
 
 router.get("/", userController.getAllUsersController);
 
-router.get("/me", middleware(), userController.getLoggedInUserController);
+router.get("/me", authMiddleware(), userController.getLoggedInUserController);
 router.patch(
   "/update",
-  middleware(),
+  authMiddleware(),
   userController.updateUserProfileController,
 );
 

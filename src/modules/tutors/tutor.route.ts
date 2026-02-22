@@ -1,33 +1,33 @@
 import express from "express";
-import middleware, { userRole } from "../../middleware/auth";
+
 import { tutorsController } from "./tutors.controller";
+import authMiddleware, { userRole } from "../../middleware/authMiddleware";
 
 const router = express.Router();
 
 router.post(
   "/",
-  middleware(userRole.TUTOR),
+  authMiddleware(userRole.TUTOR),
   tutorsController.createTutorProfile,
 );
 
 router.get("/", tutorsController.getAllTutors);
-// router.get("/:id", tutorsController.getAllTutors);
 
 router.get(
   "/me",
-  middleware(userRole.TUTOR),
+  authMiddleware(userRole.TUTOR),
   tutorsController.getAllTutorProfilesController,
 );
-router.get("/:id", middleware(), tutorsController.getTutorProfileById);
+router.get("/:id", authMiddleware(), tutorsController.getTutorProfileById);
 
 router.put(
   "/profile",
-  middleware(userRole.TUTOR),
+  authMiddleware(userRole.TUTOR),
   tutorsController.updateTutorProfile,
 );
 router.put(
   "/availability",
-  middleware(userRole.TUTOR),
+  authMiddleware(userRole.TUTOR),
   tutorsController.setAvailability,
 );
 

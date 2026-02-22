@@ -1,31 +1,35 @@
 import express from "express";
 
 import { adminController } from "./admin.controller";
-import middleware, { userRole } from "../../middleware/auth";
+import authMiddleware, { userRole } from "../../middleware/authMiddleware";
 
 const router = express.Router();
 
-router.get("/users", middleware(userRole.ADMIN), adminController.getAllUsers);
+router.get(
+  "/users",
+  authMiddleware(userRole.ADMIN),
+  adminController.getAllUsers,
+);
 router.patch(
   "/users/:id",
-  middleware(userRole.ADMIN),
+  authMiddleware(userRole.ADMIN),
   adminController.updateUserStatus,
 );
 router.get("/bookings", adminController.getAllBookings);
 router.get("/categories", adminController.getCategories);
 router.post(
   "/categories",
-  middleware(userRole.ADMIN),
+  authMiddleware(userRole.ADMIN),
   adminController.createCategory,
 );
 router.patch(
   "/categories/:id",
-  middleware(userRole.ADMIN),
+  authMiddleware(userRole.ADMIN),
   adminController.updateCategory,
 );
 router.delete(
   "/categories/:id",
-  middleware(userRole.ADMIN),
+  authMiddleware(userRole.ADMIN),
   adminController.deleteCategory,
 );
 
