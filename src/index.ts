@@ -1,4 +1,4 @@
 import "dotenv/config";
-import app from "../src/app";
+import app from "./app";
 
 export default app;
