@@ -2,7 +2,7 @@ import express from "express";
 import { toNodeHandler } from "better-auth/node";
 
 import cors from "cors";
-import { adminRouter } from "./modules/admin/admin.route";
+
 import { bookingRouter } from "./modules/booking/booking.route";
 import { reviewRouter } from "./modules/review/review.route";
 import { tutorRouter } from "./modules/tutors/tutor.route";
@@ -10,6 +10,7 @@ import { userRouter } from "./modules/user/user.route";
 import { notFound } from "./middleware/notFound";
 import errorHandler from "./middleware/globalErrorHandler";
 import { auth } from "./lib/auth";
+import { adminRouter } from "./modules/admin/admin.route";
 
 const app = express();
 app.use(
