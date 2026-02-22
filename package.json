@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "npx tsx watch src/index.ts",
-    "build": "npx prisma generate && tsup src/**/*.ts --format esm --platform node --target node20 --outDir dist --external pg-native --dts",
+    "build": "npx prisma generate && tsup src/index.ts --format esm --platform node --target node20 --outDir dist --dts",
     "start": "node dist/index.js",
     "postinstall": "prisma generate"
   },
