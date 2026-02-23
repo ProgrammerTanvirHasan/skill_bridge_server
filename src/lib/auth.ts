@@ -1,13 +1,18 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
-// If your Prisma file is located elsewhere, you can change the path
+
+// Auth server URL and allowed origins from .env only
+const baseURL = process.env.BETTER_AUTH_URL ?? process.env.APP_URL;
+const trustedOrigins = process.env.APP_URL ? [process.env.APP_URL] : [];
 
 export const auth = betterAuth({
+  basePath: "/api/auth",
+  ...(baseURL && { baseURL }),
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
-  trustedOrigins: [process.env.APP_URL!],
+  ...(trustedOrigins.length > 0 && { trustedOrigins }),
   user: {
     additionalFields: {
       role: {
