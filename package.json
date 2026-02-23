@@ -2,10 +2,10 @@
   "name": "skill-bridge-server",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "api/index.js",
   "scripts": {
     "dev": "npx tsx watch src/index.ts",
-    "build": "npx prisma generate && tsup src/index.ts --format esm --platform node --target node20 --outDir dist --dts",
+    "build": "npx prisma generate && tsup src/index.ts --format esm --platform node --target node20 --outDir api --external pg-native",
     "start": "node dist/index.js",
     "postinstall": "prisma generate"
   },
