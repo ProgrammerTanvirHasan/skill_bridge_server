@@ -2,6 +2,7 @@ import express from "express";
 
 import { tutorsController } from "./tutors.controller";
 import authMiddleware, { userRole } from "../../middleware/authMiddleware";
+console.log(authMiddleware, userRole, "ttttttttttt");
 
 const router = express.Router();
 

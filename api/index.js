@@ -121,6 +121,12 @@ var auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       accessType: "offline"
     }
+  },
+  cookies: {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+    path: "/"
   }
 });
 
@@ -309,6 +315,12 @@ var adminController = {
 };
 
 // src/middleware/authMiddleware.ts
+var userRole = /* @__PURE__ */ ((userRole2) => {
+  userRole2["STUDENT"] = "STUDENT";
+  userRole2["TUTOR"] = "TUTOR";
+  userRole2["ADMIN"] = "ADMIN";
+  return userRole2;
+})(userRole || {});
 var authMiddleware = (...roles) => {
   return async (req, res, next) => {
     try {
@@ -823,7 +835,6 @@ var getAllTutorProfiles = async () => {
   const profiles = await prisma.tutorProfile.findMany({
     include: {
       user: true,
-      // যাতে email access করতে পারো
       categories: { include: { category: true } }
     }
   });
@@ -1079,6 +1090,7 @@ var tutorsController = {
 };
 
 // src/modules/tutors/tutor.route.ts
+console.log(authMiddleware_default, userRole, "ttttttttttt");
 var router4 = express4.Router();
 router4.post(
   "/",
@@ -1252,10 +1264,11 @@ function notFound(req, res) {
 
 // src/middleware/globalErrorHandler.ts
 function errorHandler(err, _req, res, _next) {
-  console.error(err);
-  res.status(err.statusCode || 500).json({
+  console.error("\u{1F525} FULL ERROR:", err);
+  console.error("\u{1F525} STACK:", err?.stack);
+  res.status(500).json({
     success: false,
-    message: err.message || "Internal Server Error"
+    message: err?.message || "Internal Server Error"
   });
 }
 

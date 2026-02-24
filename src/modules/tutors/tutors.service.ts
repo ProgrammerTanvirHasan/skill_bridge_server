@@ -119,7 +119,7 @@ const getTutorById = async (tutorId: number) => {
 const getAllTutorProfiles = async () => {
   const profiles = await prisma.tutorProfile.findMany({
     include: {
-      user: true, // যাতে email access করতে পারো
+      user: true,
       categories: { include: { category: true } },
     },
   });
