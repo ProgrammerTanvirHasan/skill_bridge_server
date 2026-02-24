@@ -2,7 +2,6 @@ import express from "express";
 
 import { tutorsController } from "./tutors.controller";
 import authMiddleware, { userRole } from "../../middleware/authMiddleware";
-console.log(authMiddleware, userRole, "ttttttttttt");
 
 const router = express.Router();
 
@@ -19,7 +18,10 @@ router.get(
   authMiddleware(userRole.TUTOR),
   tutorsController.getAllTutorProfilesController,
 );
-router.get("/:id", authMiddleware(), tutorsController.getTutorProfileById);
+router.get(
+  "/:id",
+  tutorsController.getTutorProfileById,
+);
 
 router.put(
   "/profile",
