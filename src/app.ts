@@ -15,13 +15,13 @@ const app = express();
 
 app.use(
   cors({
-    origin: process.env.APP_URL || "http://localhost:3000",
+    origin:
+      process.env.APP_URL || "https://skill-bridge-client-ruby.vercel.app",
     credentials: true,
   }),
 );
 
 app.use(express.json());
-
 
 app.all("/api/auth/*splat", toNodeHandler(auth));
 

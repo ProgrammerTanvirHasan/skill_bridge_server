@@ -40,10 +40,4 @@ export const auth = betterAuth({
       accessType: "offline",
     },
   },
-  cookies: {
-    httpOnly: true,
-    secure: false,
-    sameSite: "lax",
-    path: "/",
-  },
 });
