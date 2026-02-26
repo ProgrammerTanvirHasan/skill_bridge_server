@@ -2,7 +2,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 
-// Auth server URL and allowed origins from .env only
+
 const baseURL = process.env.BETTER_AUTH_URL ?? process.env.APP_URL;
 const trustedOrigins = process.env.APP_URL ? [process.env.APP_URL] : [];
 

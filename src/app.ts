@@ -15,8 +15,9 @@ const app = express();
 
 app.use(
   cors({
-    origin:
-      process.env.APP_URL || "https://skill-bridge-client-ruby.vercel.app",
+    origin: (origin, callback) => {
+      callback(null, true);
+    },
     credentials: true,
   }),
 );

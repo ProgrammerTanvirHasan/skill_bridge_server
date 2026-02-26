@@ -121,12 +121,6 @@ var auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       accessType: "offline"
     }
-  },
-  cookies: {
-    httpOnly: true,
-    secure: false,
-    sameSite: "lax",
-    path: "/"
   }
 });
 
@@ -315,12 +309,6 @@ var adminController = {
 };
 
 // src/middleware/authMiddleware.ts
-var userRole = /* @__PURE__ */ ((userRole2) => {
-  userRole2["STUDENT"] = "STUDENT";
-  userRole2["TUTOR"] = "TUTOR";
-  userRole2["ADMIN"] = "ADMIN";
-  return userRole2;
-})(userRole || {});
 var authMiddleware = (...roles) => {
   return async (req, res, next) => {
     try {
@@ -1090,7 +1078,6 @@ var tutorsController = {
 };
 
 // src/modules/tutors/tutor.route.ts
-console.log(authMiddleware_default, userRole, "ttttttttttt");
 var router4 = express4.Router();
 router4.post(
   "/",
@@ -1103,7 +1090,10 @@ router4.get(
   authMiddleware_default("TUTOR" /* TUTOR */),
   tutorsController.getAllTutorProfilesController
 );
-router4.get("/:id", authMiddleware_default(), tutorsController.getTutorProfileById);
+router4.get(
+  "/:id",
+  tutorsController.getTutorProfileById
+);
 router4.put(
   "/profile",
   authMiddleware_default("TUTOR" /* TUTOR */),
@@ -1276,7 +1266,7 @@ function errorHandler(err, _req, res, _next) {
 var app = express6();
 app.use(
   cors({
-    origin: process.env.APP_URL || "http://localhost:3000",
+    origin: process.env.APP_URL || "https://skill-bridge-client-ruby.vercel.app",
     credentials: true
   })
 );
