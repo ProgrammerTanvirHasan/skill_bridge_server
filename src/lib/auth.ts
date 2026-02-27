@@ -2,17 +2,17 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 
-
-const baseURL = process.env.BETTER_AUTH_URL ?? process.env.APP_URL;
-const trustedOrigins = process.env.APP_URL ? [process.env.APP_URL] : [];
-
 export const auth = betterAuth({
   basePath: "/api/auth",
-  ...(baseURL && { baseURL }),
+
+  baseURL: process.env.BETTER_AUTH_URL as string,
+
+  trustedOrigins: [process.env.CLIENT_URL as string],
+
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
-  ...(trustedOrigins.length > 0 && { trustedOrigins }),
+
   user: {
     additionalFields: {
       role: {
@@ -27,11 +27,13 @@ export const auth = betterAuth({
       },
     },
   },
+
   emailAndPassword: {
     enabled: true,
     autoSignIn: true,
     requireEmailVerification: false,
   },
+
   socialProviders: {
     google: {
       prompt: "select_account",

@@ -15,10 +15,10 @@ const app = express();
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      callback(null, true);
-    },
+    origin: process.env.CLIENT_URL,
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    optionsSuccessStatus: 200,
   }),
 );
 
