@@ -2,16 +2,27 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 
+// baseURL must be the server origin only (no /api/auth); basePath is set below
+const rawBaseUrl = (process.env.BETTER_AUTH_URL || "").trim();
+const baseURL = rawBaseUrl.replace(/\/api\/auth\/?$/i, "") || rawBaseUrl;
+const frontendUrl = process.env.FRONTEND_URL || process.env.CLIENT_URL;
+const isProduction = baseURL?.startsWith("https://");
+
 export const auth = betterAuth({
   basePath: "/api/auth",
+  baseURL,
 
-  baseURL: process.env.BETTER_AUTH_URL as string,
-
-  trustedOrigins: [process.env.CLIENT_URL as string],
+  trustedOrigins: frontendUrl ? [frontendUrl] : [],
 
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
+
+  advanced: {
+    defaultCookieAttributes: isProduction
+      ? { sameSite: "none", secure: true }
+      : undefined,
+  },
 
   user: {
     additionalFields: {

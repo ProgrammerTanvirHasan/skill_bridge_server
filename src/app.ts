@@ -13,18 +13,22 @@ import errorHandler from "./middleware/globalErrorHandler";
 
 const app = express();
 
+const frontendOrigin =
+  process.env.FRONTEND_URL || process.env.CLIENT_URL || "http://localhost:3000";
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: frontendOrigin,
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     optionsSuccessStatus: 200,
   }),
 );
 
-app.use(express.json());
-
+// Better Auth must be mounted before express.json() or the client can get stuck on "pending"
 app.all("/api/auth/*splat", toNodeHandler(auth));
+
+app.use(express.json());
 
 app.use("/api/user", userRouter);
 app.use("/api/tutor", tutorRouter);
