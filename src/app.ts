@@ -25,7 +25,6 @@ app.use(
   }),
 );
 
-// Better Auth must be mounted before express.json() or the client can get stuck on "pending"
 app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use(express.json());
